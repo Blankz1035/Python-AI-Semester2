@@ -5,7 +5,6 @@ import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 from sklearn.model_selection import train_test_split
-
 import seaborn as sns
 
 ## File input via CSV
@@ -52,9 +51,6 @@ if 1 == 2:
     plt.show()
 
 # The visualization indicates that we have correlation between the following:
-# NEO and Temperature
-# AmbientPressure and Temp
-# NEO  and AmbientPressure
 ####### Results
 #                  Temperature  AmbientPressure  ...  ExhaustVacuum  NetEnergyOutput
 # Temperature         1.000000         0.842456  ...      -0.549027        -0.949082
@@ -74,26 +70,31 @@ x = data[["Temperature", "AmbientPressure", "RelHumidity", "ExhaustVacuum"]] # r
 ## Create test and training data.
 X_train, X_test, Y_train, Y_test = train_test_split(x, y, test_size = 0.33, random_state = 32)
 
-print(X_train.shape)
-print(X_test.shape)
-print(Y_train.shape)
-print(Y_test.shape)
+# print(X_train.shape)
+# print(X_test.shape)
+# print(Y_train.shape)
+# print(Y_test.shape)
 
 model = LinearRegression()
-
 model.fit(X_train, Y_train)
 
+## Predictions
 Y_Pred = model.predict(X_test)
 
+# Scatter with Line of best fit (1st degree)
 plt.scatter(x=Y_test, y=Y_Pred)
+m, b = np.polyfit(Y_test, Y_Pred, 1)
+#m = slope, b=intercept
+plt.plot(Y_test, m*Y_test + b, 'r-')
 plt.show()
 
+## Accuracy
 rmse = np.sqrt(mean_squared_error(Y_test,Y_Pred))
-
 r2 = r2_score(Y_test,Y_Pred)
 
+# Final output
+print()
 print ('Best rmse = ', rmse)
 print ('Best R2 ', r2)
-
 print("Best Random State: 32")
 
