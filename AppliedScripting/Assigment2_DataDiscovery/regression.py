@@ -36,19 +36,20 @@ print(data.corr())
 # Our dependent variable is the netenergeyoutput of the DF.
 y = data.NetEnergyOutput
 
-
 # Visualization
-sns.displot(y, bins=30)
-plt.show()
+### Visualization Switch
+if 1 == 2:
+    sns.displot(y, bins=30)
+    plt.show()
 
-ax = sns.heatmap(data.corr(),
-cmap=sns.cubehelix_palette(20, light=0.95, dark=0.15))
-ax.xaxis.tick_top() # move labels to the top
+    ax = sns.heatmap(data.corr(),
+    cmap=sns.cubehelix_palette(20, light=0.95, dark=0.15))
+    ax.xaxis.tick_top() # move labels to the top
 
-sns.pairplot(data,
-plot_kws={'alpha': 0.6},
-diag_kws={'bins': 30})
-plt.show()
+    sns.pairplot(data,
+    plot_kws={'alpha': 0.6},
+    diag_kws={'bins': 30})
+    plt.show()
 
 # The visualization indicates that we have correlation between the following:
 # NEO and Temperature
@@ -62,5 +63,37 @@ plt.show()
 # ExhaustVacuum      -0.549027        -0.309473  ...       1.000000         0.391671
 # NetEnergyOutput    -0.949082        -0.866988  ...       0.391671         1.000000
 
+# Model variables
+# y has been set previously.
+### Split data to X and Y variables. Y will be explained by the X data.
+#x = data[["Temperature", "AmbientPressure", "RelHumidity", "ExhaustVacuum", "NetEnergyOutput"]] # r2  1.0
+x = data[["Temperature", "AmbientPressure", "RelHumidity", "ExhaustVacuum"]] # r2  0.9340949633631872
+#x = data[["Temperature", "AmbientPressure", "RelHumidity"]]  # r2  0.9214847177606686
+#x = data[["Temperature", "AmbientPressure"]] # r2  0.9191244258393328
 
+## Create test and training data.
+X_train, X_test, Y_train, Y_test = train_test_split(x, y, test_size = 0.33, random_state = 32)
+
+print(X_train.shape)
+print(X_test.shape)
+print(Y_train.shape)
+print(Y_test.shape)
+
+model = LinearRegression()
+
+model.fit(X_train, Y_train)
+
+Y_Pred = model.predict(X_test)
+
+plt.scatter(x=Y_test, y=Y_Pred)
+plt.show()
+
+rmse = np.sqrt(mean_squared_error(Y_test,Y_Pred))
+
+r2 = r2_score(Y_test,Y_Pred)
+
+print ('Best rmse = ', rmse)
+print ('Best R2 ', r2)
+
+print("Best Random State: 32")
 
